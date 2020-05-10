@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="M1nzhi">
+
+
+
+
+
+<title>阿里云专有云安全运营总结 | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">M1nzhi&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">M1nzhi&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">阿里云专有云安全运营总结</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">M1nzhi</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 10, 2020&nbsp;&nbsp;10:30:07</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/category/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5/">安全运营</a>
+                            
+                                <a href="/category/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5/%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/">安全建设</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>在“阿里云专有云安全服务团队”也快将近2年的时间了，对云上安全建设和运营有一点粗浅的经验，希望可以抛砖引玉，借此文章能有机会和大佬们交流 安全运营，安全建设方向的经验</p>
+<p>首先我贴一张思维导图，云上安全运营工作主要围绕此图开展，因为我们的身份是云安全乙方，所以不开展SDL工作。</p>
+<p><img src="/2020/05/10/AliyunSecOperationSummry/1.jpg" alt></p>
+<h3 id="1-风险管理"><a href="#1-风险管理" class="headerlink" title="1. 风险管理"></a>1. 风险管理</h3><p>风险管理工作是安全运营的重头戏，风险管理是一个动态的过程，所以工作量不言而喻。</p>
+<p>我们的风险管理其实和甲方的有些不一样，比如我们省去了对重要资产的估值这一步，只要是租户的资产，我们都ALL IN ONE，我们把重心放在更细粒度的发现风险项上。</p>
+<h4 id="1-1-云上风险项"><a href="#1-1-云上风险项" class="headerlink" title="1.1 云上风险项"></a>1.1 云上风险项</h4><table>
+<thead>
+<tr>
+<th align="left">风险名称</th>
+<th>详情</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">安全组风险</td>
+<td>[-1/-1,21/21,22/22,3389/3389,6379/6379,1433/1433,3306/3306]，0.0.0.0/0，入方向，允许</td>
+</tr>
+<tr>
+<td align="left">RDS白名单风险</td>
+<td>白名单策略：0.0.0.0/0</td>
+</tr>
+<tr>
+<td align="left">安骑士离线风险</td>
+<td>安骑士状态: offline</td>
+</tr>
+<tr>
+<td align="left">漏洞</td>
+<td>调用云盾API获取相关数据</td>
+</tr>
+<tr>
+<td align="left">弱口令风险</td>
+<td>数据库，tomcat，weblogic，RDP，SSH</td>
+</tr>
+<tr>
+<td align="left">基线检查</td>
+<td>调用云盾基线检查API获取</td>
+</tr>
+</tbody></table>
+<h4 id="1-2-自动化监控风险"><a href="#1-2-自动化监控风险" class="headerlink" title="1.2 自动化监控风险"></a>1.2 自动化监控风险</h4><p>阿里云几乎所有的产品都支持API调用，通过编写相关规则，可以实现自动化监控风险的功能。</p>
+<p>例如安全组风险，通过如下SDK可以获取到某个Region的所有安全组信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> aliyunsdkcore.client <span class="keyword">import</span> AcsClient</span><br><span class="line"><span class="keyword">from</span> aliyunsdkcore.acs_exception.exceptions <span class="keyword">import</span> ClientException</span><br><span class="line"><span class="keyword">from</span> aliyunsdkcore.acs_exception.exceptions <span class="keyword">import</span> ServerException</span><br><span class="line"><span class="keyword">from</span> aliyunsdkecs.request.v20140526.DescribeSecurityGroupAttributeRequest <span class="keyword">import</span> DescribeSecurityGroupAttributeRequest</span><br><span class="line"></span><br><span class="line">client = AcsClient(<span class="string">'&lt;accessKeyId&gt;'</span>, <span class="string">'&lt;accessSecret&gt;'</span>, <span class="string">'cn-hangzhou'</span>)</span><br><span class="line"></span><br><span class="line">request = DescribeSecurityGroupAttributeRequest()</span><br><span class="line">request.set_accept_format(<span class="string">'json'</span>)</span><br><span class="line"></span><br><span class="line">response = client.do_action_with_exception(request)</span><br><span class="line"><span class="comment"># python2:  print(response) </span></span><br><span class="line">print(str(response, encoding=<span class="string">'utf-8'</span>))</span><br></pre></td></tr></table></figure>
+
+<p>返回的字典数据中，Permission字段包含了“授权方向”，“IP协议”，“授权范围”，“端口范围”，“授权策略”</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th></th>
+<th></th>
+<th>安全组权限规则集合。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CreateTime</td>
+<td>String</td>
+<td>2018-12-12T07:28:38Z</td>
+<td>创建时间，UTC时间。</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>String</td>
+<td>FinanceDept</td>
+<td>安全组描述信息。</td>
+</tr>
+<tr>
+<td>DestCidrIp</td>
+<td>String</td>
+<td>0.0.0.0/0</td>
+<td>目标IP地址段，用于出方向授权。</td>
+</tr>
+<tr>
+<td>DestGroupId</td>
+<td>String</td>
+<td>sg-securitygroupid1</td>
+<td>目标安全组，用于出方向授权。</td>
+</tr>
+<tr>
+<td>DestGroupName</td>
+<td>String</td>
+<td>SecurityGuard</td>
+<td>目的端安全组名称。</td>
+</tr>
+<tr>
+<td>DestGroupOwnerAccount</td>
+<td>String</td>
+<td>SecurityGuard</td>
+<td>目标安全组所属阿里云账户ID。</td>
+</tr>
+<tr>
+<td>Direction</td>
+<td>String</td>
+<td>ingress</td>
+<td>授权方向。</td>
+</tr>
+<tr>
+<td>IpProtocol</td>
+<td>String</td>
+<td>TCP</td>
+<td>IP协议。</td>
+</tr>
+<tr>
+<td>Ipv6DestCidrIp</td>
+<td>String</td>
+<td>2001:db8:1233:1a00::***</td>
+<td>目的IPv6地址段。</td>
+</tr>
+<tr>
+<td>Ipv6SourceCidrIp</td>
+<td>String</td>
+<td>2001:db8:1234:1a00::***</td>
+<td>源IPv6地址段。</td>
+</tr>
+<tr>
+<td>NicType</td>
+<td>String</td>
+<td>intranet</td>
+<td>网络类型。</td>
+</tr>
+<tr>
+<td>Policy</td>
+<td>String</td>
+<td>Accept</td>
+<td>授权策略。</td>
+</tr>
+<tr>
+<td>PortRange</td>
+<td>String</td>
+<td>80/80</td>
+<td>端口范围。</td>
+</tr>
+<tr>
+<td>Priority</td>
+<td>String</td>
+<td>1</td>
+<td>规则优先级。</td>
+</tr>
+<tr>
+<td>SourceCidrIp</td>
+<td>String</td>
+<td>0.0.0.0/0</td>
+<td>源IP地址段，用于入方向授权。</td>
+</tr>
+<tr>
+<td>SourceGroupId</td>
+<td>String</td>
+<td>sg-securitygroupid2</td>
+<td>源安全组，用于入方向授权。</td>
+</tr>
+<tr>
+<td>SourceGroupName</td>
+<td>String</td>
+<td>FinanceDeptJoshua</td>
+<td>源端安全组名称。</td>
+</tr>
+<tr>
+<td>SourceGroupOwnerAccount</td>
+<td>String</td>
+<td>FinanceJoshua</td>
+<td>源安全组所属阿里云账户ID。</td>
+</tr>
+<tr>
+<td>SourcePortRange</td>
+<td>String</td>
+<td>80/80</td>
+<td>源端端口范围。</td>
+</tr>
+</tbody></table>
+<p>通过如下示例代码可以过滤出存在高风险的安全组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">riskdetail = &#123;&#125;</span><br><span class="line">secgroupname = response.get(<span class="string">'SecurityGroupName'</span>)</span><br><span class="line">permission = response.get(<span class="string">'Permissions'</span>)[<span class="string">'Permission'</span>]</span><br><span class="line">Direction = permission.get(<span class="string">'Direction'</span>)</span><br><span class="line">Policy = permission.get(<span class="string">'Policy'</span>)</span><br><span class="line">PortRange = permission.get(<span class="string">'PortRange'</span>)</span><br><span class="line">SourceCidrIp = permission.get(<span class="string">'SourceCidrIp'</span>)</span><br><span class="line">risk_ports=[<span class="number">-1</span>/<span class="number">-1</span>,<span class="number">21</span>/<span class="number">21</span>,<span class="number">22</span>/<span class="number">22</span>,<span class="number">3389</span>/<span class="number">3389</span>,<span class="number">6379</span>/<span class="number">6379</span>,<span class="number">1433</span>/<span class="number">1433</span>,<span class="number">3306</span>/<span class="number">3306</span>]</span><br><span class="line"><span class="keyword">if</span>(Direction==<span class="string">'ingress'</span>&amp;&amp;Policy==<span class="string">'Accept'</span>&amp;&amp;(PortRange <span class="keyword">in</span> risk_ports)&amp;&amp;SourceCidrIp==<span class="string">'0.0.0.0/0'</span>):</span><br><span class="line">    riskdetail = &#123;<span class="string">'secgroupname'</span>:secgroupname,<span class="string">'Direction'</span>:Direction,<span class="string">'Policy'</span>:<span class="string">'Policy'</span>,<span class="string">'PortRange'</span>:PortRange,<span class="string">'SourceCidrIp'</span>:SourceCidrIp,&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里仅以安全组风险举例，其它风险项如法炮制，都是调用阿里云API获取数据，并通过规则筛选出风险项。</p>
+<p>6个风险项，以面向对象的编程思想封装成6个类。并设置计划任务，每天运行一次。</p>
+<h4 id="1-3-降低风险"><a href="#1-3-降低风险" class="headerlink" title="1.3 降低风险"></a>1.3 降低风险</h4><p>降低风险也可以理解成风险处置。作为云安全乙方，我们没有权限对租户的风险项进行直接修改操作，只能通过以下两种方式通知租户进行修复：</p>
+<ol>
+<li>钉钉告警</li>
+<li>短信告警</li>
+</ol>
+<h4 id="1-4-责任划分"><a href="#1-4-责任划分" class="headerlink" title="1.4 责任划分"></a>1.4 责任划分</h4><p>平台侧：负责发现风险，并通知到租户</p>
+<p>租户侧：进行风险项整改工作</p>
+<h3 id="2-应急响应"><a href="#2-应急响应" class="headerlink" title="2.应急响应"></a>2.应急响应</h3><p>资产数量多，难免会发生安全事件，所以应急响应也划分进了安全运营范畴。处理过多次应急响应事件，包括挖矿事件，对外ddos事件。入侵原因top3：ssh暴力破解，redis未授权访问，elasticsearch弱口令</p>
+<h4 id="2-1-事前准备"><a href="#2-1-事前准备" class="headerlink" title="2.1 事前准备"></a>2.1 事前准备</h4><ol>
+<li>编写应急响应方案</li>
+<li>工具准备：windows，linux杀毒软件，rootkit扫描工具</li>
+</ol>
+<h4 id="2-2-事中处置"><a href="#2-2-事中处置" class="headerlink" title="2.2 事中处置"></a>2.2 事中处置</h4><p>遵守PDCERF模型进行应急响应工作。一般情况下，我会按照如下步骤进行应急</p>
+<ol>
+<li>初步判断事件真伪</li>
+<li>找到项目负责人，拉群成立临时应急响应小组</li>
+<li>经租户授权许可后进行应急响应工作</li>
+<li>备份快照</li>
+<li>登录服务器，分析网络连接，并根据网络连接进行访问控制，例如挖矿通信端口1234，立即网络阻断掉该端口</li>
+<li>通过网络访问控制，对内网机器进行隔离，降低内网横向感染风险</li>
+<li>分析进程，kill恶意进程</li>
+<li>检查启动项，删除恶意启动项</li>
+<li>检查是否存在隐形账号，并通过工具自动化检查rootkit</li>
+<li>杀毒软件对服务器进行全盘扫描，删除病毒</li>
+<li>入侵溯源，重点分析：.bash_history, web日志，互联网服务（例如elasticsearch，redis）日志</li>
+<li>找到入侵原因后，进行加固</li>
+</ol>
+<h4 id="2-3-事后关注"><a href="#2-3-事后关注" class="headerlink" title="2.3 事后关注"></a>2.3 事后关注</h4><p>事后，要保持一段时间对该机器以及该网段其它机器进行重点关注，以防残留后门导致事件复发。</p>
+<h3 id="3-安全巡检"><a href="#3-安全巡检" class="headerlink" title="3.安全巡检"></a>3.安全巡检</h3><p>安全巡检是安全运营工作中频率最高的工作项。正常情况下，重要的部门需要一天进行2次巡检，早上下午各一次。</p>
+<h4 id="3-1-编写安全巡检方案"><a href="#3-1-编写安全巡检方案" class="headerlink" title="3.1 编写安全巡检方案"></a>3.1 编写安全巡检方案</h4><p>将巡检的操作流程，巡检项，注意事项进行文档化，一方面可以为新入职的安全工程师提供指导，另外一方面可以满足安全评审需要。</p>
+<h4 id="3-2-日常巡检工作"><a href="#3-2-日常巡检工作" class="headerlink" title="3.2 日常巡检工作"></a>3.2 日常巡检工作</h4><p>假设网络环境分为专有云区和公有云区，有5个租户，每天都要进行2次安全巡检，那么一天巡检的次数就是10次。需要关注的巡检项包括：</p>
+<ol>
+<li>态势感知事件</li>
+<li>主机安全事件</li>
+<li>基线检查（风险）</li>
+<li>漏洞检查（风险）</li>
+</ol>
+<p>那么，浪费在5个租户上的巡检时间会非常多，好在阿里云提供了API，可以帮助我们从多租户双区域的手工巡检中解脱出来。这里我想表达的意思是，其实安全巡检本身没什么技术含量，但却又是一个重复繁琐的工作，利用好编程能力，可以很大程度上提高 工作效率，这也是为什么很多公司要求安全运营人员要掌握一门编程语言的原因。</p>
+<h4 id="3-3-记录巡检数据"><a href="#3-3-记录巡检数据" class="headerlink" title="3.3 记录巡检数据"></a>3.3 记录巡检数据</h4><p>保存巡检数据主要是为了<strong>审计</strong>，为了问责。（个人观点）</p>
+<p>假如4月1号早上发生了安全事件，作为安全运营工程师没有及时做好巡检工作，第二天巡检的时候才发现事件告警，导致了租户严重损失，这个责任是需要的安全工程师承担的。</p>
+<p><strong>巡检日志表格示例</strong></p>
+<table>
+<thead>
+<tr>
+<th>巡检时间</th>
+<th>巡检项</th>
+<th>租户</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2020.4.1 10:20</td>
+<td>基线检查</td>
+<td>省政府</td>
+<td>安全</td>
+</tr>
+<tr>
+<td>2020.4.1 10:20</td>
+<td>态势感知事件</td>
+<td>省政府</td>
+<td>安全</td>
+</tr>
+<tr>
+<td>2020.4.2 16:20</td>
+<td>基线检查</td>
+<td>省政府</td>
+<td>安全</td>
+</tr>
+<tr>
+<td>2020.4.2 16:20</td>
+<td>漏洞检查</td>
+<td>省政府</td>
+<td>安全</td>
+</tr>
+<tr>
+<td>2020.4.2 16:20</td>
+<td>态势感知事件</td>
+<td>省政府</td>
+<td>暴力破解成功</td>
+</tr>
+<tr>
+<td>2020.4.2 16:20</td>
+<td>主机安全事件</td>
+<td>省政府</td>
+<td>挖矿事件</td>
+</tr>
+</tbody></table>
+<p>上面的表格4.1没有对主机安全事件进行巡检，第二天才发现有挖矿事件，导致租户遭受了重大损失。所以作为安全运营工程师应该承担主要责任。</p>
+<h3 id="4-安全产品运营"><a href="#4-安全产品运营" class="headerlink" title="4.安全产品运营"></a>4.安全产品运营</h3><p>云安全产品运营是我们云安全运营工程的职责之一。租户通过开通/接入申请，我们对安全产品进行接入，配置操作。</p>
+<ol>
+<li>租户申请10个域名接入WAF -&gt; 安全运营工程师进行配置 -&gt;  本地修改hosts验证 -&gt; 租户修改dns记录</li>
+<li>租户申请10台ECS接入堡垒机 -&gt; 安全运营工程师进行配置 -&gt; 通过test用户验证可用性 -&gt;完成配置</li>
+<li>云盾功能性测试。（云盾版本升级后，或者同城容灾部署后）</li>
+</ol>
+<h3 id="5-编写文档"><a href="#5-编写文档" class="headerlink" title="5. 编写文档"></a>5. 编写文档</h3><p>编写文档，并不是安全运营工程师的主要职责，这个工作应该由安全架构师或者首席安全官来做。但有时候安全团队会选择相信我，让我完成其中一部分文档的编写。例如《云上安全加固方案》，《安全巡检方案》，《应急响应方案》。有时候尝试做自己不擅长做的事情，能帮助自己快速成长。</p>
+<h3 id="6-业务上线评审（TODOLIST）"><a href="#6-业务上线评审（TODOLIST）" class="headerlink" title="6. 业务上线评审（TODOLIST）"></a>6. 业务上线评审（TODOLIST）</h3><p>目前，租户的业务上线是没有经过我们安全评审的。比如项目方可以有权限自己开安全组，想怎么开就怎么开。业务系统上线前也几乎不会做漏洞扫描和安全测试。安全工作应该伴随项目规划到项目实施再到上线项目的整个生命周期。不经过评审就直接上项目，严重违背了安全建设生命周期。这一块需要规范起来，但一直没有时间去做。</p>
+<table>
+<thead>
+<tr>
+<th>云安全业务上线评审项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. 业务系统是否做过安全测试</td>
+</tr>
+<tr>
+<td>2. web业务是否接入WAF</td>
+</tr>
+<tr>
+<td>3. 服务器配置是否满足安全基线要求</td>
+</tr>
+<tr>
+<td>4. 安全组是否满足安全要求</td>
+</tr>
+<tr>
+<td>5. 安骑士是否在线</td>
+</tr>
+<tr>
+<td>6. web程序是否以最低权限要求运行</td>
+</tr>
+</tbody></table>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>M1nzhi</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://yoursite.com/2020/05/10/AliyunSecOperationSummry/">http://yoursite.com/2020/05/10/AliyunSecOperationSummry/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5-%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/"># -安全运营 -安全建设</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/05/08/HackThebox-Remote-Writeup/">HackThebox Remote Writeup</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© M1nzhi | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

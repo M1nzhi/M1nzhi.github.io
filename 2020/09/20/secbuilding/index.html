@@ -11,8 +11,8 @@
   
   <title>
     
-      Tag 
-       : SDL
+      甲方安全建设三阶段 
+      
       
       |
     
@@ -95,30 +95,150 @@
 
 
       <div class="flex-container">
-        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<div class="container tag-details">
-  <div class="content-title">
-    <h2>
-      <span>SDL</span>
-    </h2>
-  </div>
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
   
-    <div class="post-list">
-      <div class="post-item" title="SDL培训">
-        <span class="time-m-d">2021-01-03</span>
-        <a href="/2021/01/03/trainsec/">
-          <span>SDL培训</span>
-        </a>
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">甲方安全建设三阶段</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2020-09-20 22:00:58
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="Tags"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/" title="安全建设">
+                    <b>#</b> 安全建设
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
+      <div class="markdown-body">
+        <p>甲方安全建设主要分以下3个阶段，每个阶段着重做的事情都不一样。</p>
+<p><img src="/2020/09/20/secbuilding/1.png" alt></p>
+<h3 id="1-救火阶段"><a href="#1-救火阶段" class="headerlink" title="1. 救火阶段"></a>1. 救火阶段</h3><p>此阶段主要关注的是外部威胁</p>
+<ol>
+<li>先识别出所有资产，对资产进行分类定级；</li>
+<li>对重要的应用资产进行安全测试，挖掘系统漏洞，推进漏洞修复；</li>
+<li>对重要的主机资产进行基线检查并加固：口令复杂度，访问控制策略，文件/目录权限，端口开放情况，系统内核漏洞</li>
+<li>购买或采用开源安全设备：防火墙，web防火墙，IDS/IPS</li>
+<li>开展一波渗透测试工作</li>
+</ol>
+<p>此阶段预期2个季度完成（独立1人）</p>
+<h3 id="2-稳定阶段"><a href="#2-稳定阶段" class="headerlink" title="2.稳定阶段"></a>2.稳定阶段</h3><p>当第一阶段取得阶段性成果后，企业业务系统基本能够安全地运行，抵御大部分恶意代码或网络攻击。此时，我们需要将工作重心由外部安全威胁防护转移到内部安全和数据安全层面，同时不断完善外部安全。</p>
+<ol>
+<li>应用安全生命周期，根据公司实际情况可以将SDL阉割简化后落地；</li>
+<li>员工上网行为管理，保证发生安全事件后可以追溯；</li>
+<li>对数据各生命周期（数据采集、数据传输、数据处理、数据分析、数据共享、数据销毁）阶段进行安全防护，开展SDLC活动，保证数据安全。</li>
+<li>对整体网络架构和业务系统及数据系统进行优化，设置冗余架构和备份容灾系统，包括：电力、网络线路、服务器、应用系统、数据备份。</li>
+<li>建立攻防演练平台，开展红蓝对抗。目的是提高内部人员安全技术能力的同时也提高业务系统的安全性，培养人员和发现安全风险一举两得。</li>
+<li>关注安全动态，特别是已公布的漏洞、病毒预警等信息，进行验证和复盘，同时对标企业自身进行检查和防护。</li>
+</ol>
+<p>此阶段涉及到安全管理和安全技术，需要不同的安全工程师承担；此阶段相对会比较困难，可能很多事情会推不动，就算有公司高层给的尚方宝剑，如果这把宝剑用的稍有不慎，安全部门只会变成业务的对立面。所以需要一些软能力和业务部门搞好关系，比如一起吃个饭，周末约台球，和业务部门走的近了很多事情就自然好推进了。</p>
+<h3 id="3-提升阶段"><a href="#3-提升阶段" class="headerlink" title="3.提升阶段"></a>3.提升阶段</h3><p>此阶段重点是精细化和可视化的安全运营。基于前两个阶段的安全建设和能力提升，实现安全业务工作的常态化和可视化。包括：构建可视化的态势感知平台、ISOC、SRC（安全应急响应中心）、威胁情报库、自研安全系统（WAF、完整性检测及防篡改、堡垒机、资产管理、漏洞扫描平台等）、安全比赛、安全教育培训、合规等。</p>
+<ol>
+<li>利用前两阶段的日志和审计信息、告警信息、运行信息、收集的漏洞、病毒信息、设备的运行信息等构建企业自身的安全管理系统（SOC）和态势感知系统以及威胁情报系统，并将结果再次输入到企业安全建设发展工作中去，形成良性循环。</li>
+<li>组建安全应急响应中心（SRC），对内部和外部进行开放，以获得更多的安全情报和安全体检，发现业务更多的安全风险，丰富自身的态势和威胁情报系统。</li>
+<li>开展自行研发安全系统工作，这个时候为了更大程度提高安全防护水平，需要针对具体的业务系统自行研发有针对性的安全防护系统，加固业务安全。比如自行开发WAF、防篡改、堡垒机、资产管理和漏扫系统。</li>
+<li>主办或承办安全比赛，开展安全培训工作，提升知名度吸引更多的安全人才，同时将安全能力向外输出，获得经济收益。</li>
+<li>开展各种国家或行业层面的安全合规工作，比如等保、GDPR、PCI-DSS等，确保符合法律法规要求。</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2020/09/06/HackThebox-Lame/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2020-09-20 22:00:58
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="Tags"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%BE/" title="安全建设">
+                        <b>#</b> 安全建设
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/02/19/Bypassing-OkHttp-Certificate-Pinning/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-救火阶段"><span class="toc-text">1. 救火阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-稳定阶段"><span class="toc-text">2.稳定阶段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-提升阶段"><span class="toc-text">3.提升阶段</span></a></li></ol>
+    </div>
+  </div>
+
   
-  <nav class="post-navigation">
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-    <span class="page-num">1 / 1</span>
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
     
-  </nav>
-</div>
+  </div>
+
 
         <div class="footer">
   <div class="social">

@@ -11,8 +11,8 @@
   
   <title>
     
-      SDL培训 
-      
+      Tag 
+       : 安全建设
       
       |
     
@@ -95,153 +95,30 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
 
-<!-- LaTex Display -->
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-</script>
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  }
-};
-</script>
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">SDL培训</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime" title="Update time"></i>
-          2021-01-03 20:52:06
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags" title="Tags"></i>
-                
-                <span class="span--tag">
-                  <a href="/tags/SDL/" title="SDL">
-                    <b>#</b> SDL
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p>SDL在每个公司有自己的玩法，我的做法是前期先挖漏洞，然后再总结出安全共性问题，然后将共性问题做成PPT给业务线的小伙伴们培训。</p>
-<p>3个月的时间，累计发现 300多个安全漏洞。经过统计发现，owasp top10 “失效的访问控制”相关的漏洞尤为突出，将近40%。其次就是业务逻辑上存在安全缺陷。</p>
-<p><img src="/2021/01/03/trainsec/1.png" alt></p>
-<h3 id="1-水平越权"><a href="#1-水平越权" class="headerlink" title="1.水平越权"></a>1.水平越权</h3><p>水平越权在rest api中经常出现。B账号可以查看到A账号的隐私信息，B账号甚至可以操作A账号的敏感操作。</p>
-<p>先来看一下漏洞案例：水平越权恶意消费他人账户余额</p>
-<p>假设A账号余额40.5元，</p>
-<p>A自己下一个5元订单，订单ID为100，支付方式为余额支付</p>
-<p>/web/index.php?store_id=1&amp;r=api/order/pay-data&amp;shop_id=1&amp;order_id=100&amp;pay_type=BALANCE_PAY&amp;access_token=A账号token&amp;_version=1.0.2&amp;_platform=wx</p>
-<p><img src="/2021/01/03/trainsec/2.png" alt></p>
-<p>现在，我用B账号再次请求</p>
-<p>/web/index.php?store_id=1&amp;r=api/order/pay-data&amp;shop_id=1&amp;order_id=100&amp;pay_type=BALANCE_PAY&amp;access_token=B账号token&amp;_version=1.0.2&amp;_platform=wx</p>
-<p><img src="/2021/01/03/trainsec/3.png" alt></p>
-<p>这里存在2个安全问题</p>
-<ol>
-<li>水平越权支付订单。</li>
-<li>已支付过的订单还可以再次支付。</li>
-</ol>
-<p>错误的写法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span><span class="params">(token)</span>:</span></span><br><span class="line">    query = <span class="string">"select user_id from users where token=%s"</span></span><br><span class="line">    result = db.execute(query,token)</span><br><span class="line">    <span class="keyword">if</span> result.fetchone():</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_order</span><span class="params">(orderid)</span>:</span></span><br><span class="line">    token = request.header[<span class="string">'token'</span>]</span><br><span class="line">    <span class="keyword">if</span> auth(token):</span><br><span class="line">        query = <span class="string">"select * from order where orderid=%s"</span></span><br><span class="line">        result = db.execute(query,orderid)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"无权查看订单"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>这里仅仅是验证了身份，并没有对身份做对应的授权，导致所有通过验证的身份能获取到所有订单信息。</p>
-<p>正确的写法应该是</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span><span class="params">(token)</span>:</span></span><br><span class="line">    query = <span class="string">"select user_id from users where token=%s"</span></span><br><span class="line">    cur = db.execute(query,token)</span><br><span class="line">    result = cur.fetchone()</span><br><span class="line">    <span class="keyword">if</span> result:</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_order</span><span class="params">(orderid)</span>:</span></span><br><span class="line">    token = request.header[<span class="string">'token'</span>]</span><br><span class="line">    <span class="keyword">if</span> auth(token):</span><br><span class="line">        query = <span class="string">"select *from order where orderid=%s and user_id=%s"</span></span><br><span class="line">        user_id = auth(token)</span><br><span class="line">        result = db.execute(query,orderid,user_id)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"无权查看订单"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>这里order表新增一个外键user_id，每个订单对应一个id。</p>
-<p>这里也充分体现出了，在软件设计阶段就应该考虑安全风险，而不是等发现问题后再重新设计数据库逻辑。</p>
-<h3 id="2-业务逻辑缺陷"><a href="#2-业务逻辑缺陷" class="headerlink" title="2.业务逻辑缺陷"></a>2.业务逻辑缺陷</h3><p>挖掘业务逻辑漏洞需要理解业务场景，这类漏洞相对来说比较容易挖掘，所以hackerone上面有很多白帽子喜欢提交这类的安全漏洞。</p>
-<p>先来看一下案例：绕过实名进行预约挂号</p>
-<p><img src="/2021/01/03/trainsec/4.jpg" alt></p>
-<p>修改响应包中的isRealNameAuth字段，将false改为true。正常的业务场景应该是只有实名认证的就诊人才可以预约挂号，这里的漏洞容易被黄牛恶意批量挂号，消耗号源。</p>
-<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>接口越权扫描平台初探：<a href="https://mp.weixin.qq.com/s/epVb1Y4WQ-MWeRhRPlvofg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/epVb1Y4WQ-MWeRhRPlvofg</a></p>
-<p>中通burp 越权检测插件：<a href="https://github.com/ztosec/secscan-authcheck" target="_blank" rel="noopener">https://github.com/ztosec/secscan-authcheck</a></p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/2020/09/06/HackThebox-Lame/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>Prev</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime" title="Update time"></i>
-              2021-01-03 20:52:06
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags" title="Tags"></i>
-                    
-                    <span class="span--tag">
-                      <a href="/tags/SDL/" title="SDL">
-                        <b>#</b> SDL
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/2021/02/19/Bypassing-OkHttp-Certificate-Pinning/" target="_self">
-                <span>Next</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-    </div>
-    
-  <div class="post-catalog" id="catalog">
-    <div class="title">Contents</div>
-    <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-水平越权"><span class="toc-text">1.水平越权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-业务逻辑缺陷"><span class="toc-text">2.业务逻辑缺陷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#资源"><span class="toc-text">资源</span></a></li></ol>
-    </div>
+<div class="container tag-details">
+  <div class="content-title">
+    <h2>
+      <span>安全建设</span>
+    </h2>
   </div>
-
   
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
+    <div class="post-list">
+      <div class="post-item" title="甲方安全建设三阶段">
+        <span class="time-m-d">2020-09-20</span>
+        <a href="/2020/09/20/secbuilding/">
+          <span>甲方安全建设三阶段</span>
+        </a>
       </div>
+    </div>
+  
+  <nav class="post-navigation">
     
-  </div>
-
+    <span class="page-num">1 / 1</span>
+    
+  </nav>
+</div>
 
         <div class="footer">
   <div class="social">
